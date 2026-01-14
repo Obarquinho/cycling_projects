@@ -1,0 +1,8 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+#ignore my other folders
+movementcalcs/
+movement-calcs-3d-(4.4)/
+archive/
