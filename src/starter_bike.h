@@ -17,6 +17,8 @@ public:
     StarterBike();
     ~StarterBike();
 
+    // for some reason, _physics_process takes a double, and not a float as they've defined it as _physics_process(float: delta) in
+    // GDScript :) 
     void _physics_process(double delta) override;
 };
 
