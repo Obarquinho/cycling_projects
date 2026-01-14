@@ -66,3 +66,5 @@ mesh = SubResource("PrismMesh_0xm2m")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.0651942, 0.997873, 0, -0.997873, 0.0651942, 0, 19.6679, 0)
+
+[node name="StarterBike" type="StarterBike" parent="."]
