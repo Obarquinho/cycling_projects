@@ -57,6 +57,7 @@ var MAX_PITCH = -70
 var prev_rot = 0
 
 func _physics_process(delta: float) -> void:
+	return
 	var cur_velocity = velocity # not used just stored
 	var cur_acceleration = 0 
 	speed = sqrt( velocity.x*velocity.x + velocity.z*velocity.z )

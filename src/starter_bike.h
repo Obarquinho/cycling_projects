@@ -22,7 +22,7 @@ protected:
     double speed = 0;
     double angular_speed = M_PI;
     double acceleration = 0;
-    int MAX_SPEED = GEARS[0].first; // is not const.
+    int MAX_SPEED = GEARS[0].second; // is not const. dev note -> I set this to .first since I saw GEARS[0][1]. I thought I would have a problem with pairs member naming and I did :)
     int speed_cap = MAX_SPEED;
     int prev_speed_cap = 0;
     int target_speed = MAX_SPEED;
@@ -33,6 +33,9 @@ protected:
     const double STEERING_INTENSITY = 0.1;
     const double MAX_STEER = 1;
 
+
+    //[node name="PlayerBike" parent="." instance=ExtResource("1_ig7tw")]
+    //transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.29262, 0)
     // Wheels
     double front_speed = 0;
     double front_angle = 0; // radians and relative to parallel axis of main body (i.e. cos is the z vector)

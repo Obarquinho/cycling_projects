@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://n3yvykry1xpy"]
 
-[ext_resource type="PackedScene" uid="uid://def0q8epa75ey" path="res://player_bike.tscn" id="1_ig7tw"]
 [ext_resource type="Texture2D" uid="uid://by7q7me72vadq" path="res://textures/florida.png" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://q54p583ebwbv" path="res://starter_bike.tscn" id="3_h2yge"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
 albedo_texture = ExtResource("2_0xm2m")
@@ -27,9 +27,6 @@ left_to_right = -0.3
 size = Vector3(9, 4, 1)
 
 [node name="Game" type="Node3D"]
-
-[node name="PlayerBike" parent="." instance=ExtResource("1_ig7tw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.29262, 0)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
@@ -67,4 +64,5 @@ mesh = SubResource("PrismMesh_0xm2m")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.0651942, 0.997873, 0, -0.997873, 0.0651942, 0, 19.6679, 0)
 
-[node name="StarterBike" type="StarterBike" parent="."]
+[node name="StarterBike" parent="." instance=ExtResource("3_h2yge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8755123, 1.8427455, 0)

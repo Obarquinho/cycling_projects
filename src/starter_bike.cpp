@@ -1,5 +1,6 @@
 #include "starter_bike.h"
 #include <godot_cpp/core/class_db.hpp>
+#include <iostream>
 
 
 using namespace godot;
@@ -44,21 +45,21 @@ void StarterBike::_physics_process(double delta){
 
     double direction = 0;
     double z_direction = 0;
-    if (input->is_action_just_pressed("TurnLeft")){
+    if (input->is_action_pressed("TurnLeft")){
         front_angle += STEERING_INTENSITY;
         //direction = 1;
     }
-    if (input->is_action_just_pressed("TurnRight")){
+    if (input->is_action_pressed("TurnRight")){
         front_angle -= STEERING_INTENSITY;
         //direction = 1;
     }
     front_angle = std::max(-1.0 * MAX_STEER, std::min(MAX_STEER, front_angle));
 
-    if (input->is_action_just_pressed("PitchUp")){
+    if (input->is_action_pressed("PitchUp")){
         //print(get_floor_angle())
         z_direction = 1;
     }
-    if (input->is_action_just_pressed("PitchDown")){
+    if (input->is_action_pressed("PitchDown")){
         z_direction = -1;
     }
     
@@ -99,7 +100,8 @@ void StarterBike::_physics_process(double delta){
 
     // rotate_x(angular_speed * z_direction * delta)
 
-    if (input->is_action_just_pressed("Pedal")) {
+    if (input->is_action_pressed("Pedal")) {
+        //std::cout << "GREP" << speed << "\n";
         double pedal_acceleration = FRICTION + BASE_ACCELERATION  * effort_factor * get_acceleration_penalty(GEARS[gear].first, gear_penalty);
         if (pedal_acceleration <= FRICTION){
             // print("Pedal accel {} is less than friction {}".format([pedal_acceleration, FRICTION], "{}"))
@@ -138,7 +140,7 @@ void StarterBike::_physics_process(double delta){
     }
 	
 	acceleration_calcs(cur_acceleration);
-    
+    //std::cout << "GREPP" << speed << " " << acceleration << "\n";
 
 	/*# https://physics.stackexchange.com/questions/182689/what-causes-a-cars-velocity-to-follow-the-front-wheels-direction
 	
@@ -152,6 +154,7 @@ void StarterBike::_physics_process(double delta){
 	// trueRotation = rotation.y + front_angle
 	// print("main: {} front: {} frame: {}".format([trueRotation,$FrontWheel.global_rotation.y,global_rotation.y],"{}"))
 	// velocity = Vector3(0,velocity.y,speed).rotated(Vector3.UP, trueRotation)
+    // std::cout << "GREP" << speed << "\n";
     velocity = Vector3(0,velocity.y,speed).rotated(Vector3(0,1,0), rotation.y);
 
     //$FrontWheel.global_rotation.y = global_rotation.y
@@ -225,6 +228,7 @@ void StarterBike::acceleration_calcs(double& alpha){
     acceleration = alpha;
     speed += acceleration;
 
+    //std::cout << "GREP" << speed << " " << acceleration << " speed_cap " << speed_cap << " need_flip " << need_flip << "\n";
     if (speed >= speed_cap && !(need_flip)){ // had check of prev_speed_Cap
         speed = speed_cap;
         acceleration = 0;
@@ -250,7 +254,7 @@ void StarterBike::acceleration_calcs(double& alpha){
         }
     }
 
-    if (speed <= 0){
+    if (speed <= 0.0){
         speed = 0;
         acceleration = 0;
     }
