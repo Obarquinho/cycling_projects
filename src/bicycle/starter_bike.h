@@ -13,6 +13,7 @@
 // my deps
 #include "bike_wheel.h"
 #include "front_bike_wheel.h"
+#include "fork.h"
 
 namespace godot {
 
@@ -67,6 +68,7 @@ protected:
     // pointers to chilidren
     BikeWheel* p_rearWheel = nullptr;
     FrontBikeWheel* p_frontWheel = nullptr;
+    Fork* p_fork = nullptr;
 
 protected:
     static void _bind_methods();
@@ -87,9 +89,13 @@ public:
 
     // children
     void set_rear_wheel(BikeWheel* _rearWheel);
-    void set_front_wheel(FrontBikeWheel* _frontWheel);
     BikeWheel* get_rear_wheel() const;
+
+    void set_front_wheel(FrontBikeWheel* _frontWheel);
     FrontBikeWheel* get_front_wheel() const;
+
+    void set_fork(Fork* _fork);
+    Fork* get_fork() const;
 
     //virtual void input(const Ref<InputEvent> &p_event) override;
 };

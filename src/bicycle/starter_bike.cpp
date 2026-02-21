@@ -22,8 +22,12 @@ void StarterBike::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_front_wheel", "_frontWheel"), &StarterBike::set_front_wheel);
     ClassDB::bind_method(D_METHOD("get_front_wheel"), &StarterBike::get_front_wheel);
 
+    ClassDB::bind_method(D_METHOD("set_fork", "_fork"), &StarterBike::set_fork);
+    ClassDB::bind_method(D_METHOD("get_fork"), &StarterBike::get_fork);
+
     ClassDB::add_property("StarterBike", PropertyInfo(Variant::OBJECT, "Front Bike Wheel", PROPERTY_HINT_NODE_TYPE, "FrontBikeWheel"), "set_front_wheel", "get_front_wheel");
     ClassDB::add_property("StarterBike", PropertyInfo(Variant::OBJECT, "Bike Wheel", PROPERTY_HINT_NODE_TYPE, "BikeWheel"), "set_rear_wheel", "get_rear_wheel");
+    ClassDB::add_property("StarterBike", PropertyInfo(Variant::OBJECT, "Fork", PROPERTY_HINT_NODE_TYPE, "Fork"), "set_fork", "get_fork");
 
 }
 
@@ -35,6 +39,7 @@ StarterBike::~StarterBike(){
 
 }
 
+// I should really create a macro for this slop
 void StarterBike::set_rear_wheel(BikeWheel* _rearWheel) {
     p_rearWheel = _rearWheel;
 }
@@ -49,6 +54,14 @@ void StarterBike::set_front_wheel(FrontBikeWheel* _frontWheel){
 
 FrontBikeWheel* StarterBike::get_front_wheel() const {
     return p_frontWheel;
+}
+
+void StarterBike::set_fork(Fork* _fork){
+    p_fork = _fork;
+}
+
+Fork* StarterBike::get_fork() const {
+    return p_fork;
 }
 
 void StarterBike::_physics_process(double delta){
@@ -89,7 +102,9 @@ void StarterBike::_physics_process(double delta){
         direction = -1;
     }
     front_angle = std::max(-1.0 * MAX_STEER, std::min(MAX_STEER, front_angle));
-    p_frontWheel->updateSteerAngleConstant(direction);
+    if(p_fork){
+        p_fork->steer_handlebar(direction);
+    }
 
     if (input->is_action_pressed("PitchUp")){
         //print(get_floor_angle())

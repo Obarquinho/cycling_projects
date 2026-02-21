@@ -19,6 +19,7 @@ void initialize_bike_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_RUNTIME_CLASS(StarterBike);
 	GDREGISTER_RUNTIME_CLASS(BikeWheel);
 	GDREGISTER_RUNTIME_CLASS(FrontBikeWheel);
+	GDREGISTER_RUNTIME_CLASS(Fork);
 }
 
 void uninitialize_bike_module(ModuleInitializationLevel p_level) {

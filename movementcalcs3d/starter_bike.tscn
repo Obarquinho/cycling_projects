@@ -1,11 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://q54p583ebwbv"]
+[gd_scene load_steps=10 format=3 uid="uid://q54p583ebwbv"]
 
 [ext_resource type="Texture2D" uid="uid://dygvcacklg2he" path="res://textures/omafiets.jpg" id="1_1nj2o"]
 [ext_resource type="Script" uid="uid://01afeipit4r7" path="res://camera_3d.gd" id="1_1wiy0"]
 [ext_resource type="Script" uid="uid://bslfyxxjfufr7" path="res://spatial.gd" id="1_ppco3"]
 [ext_resource type="PackedScene" uid="uid://lmvpv8kp8yog" path="res://hud.tscn" id="2_1wiy0"]
 [ext_resource type="Material" uid="uid://7qqlq0kheobb" path="res://stage/tile_material.tres" id="3_ppco3"]
-[ext_resource type="Script" uid="uid://ber1ybqk1b8b2" path="res://steerer.gd" id="6_5htyf"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5htyf"]
 size = Vector3(0.6, 0.6, 1)
@@ -21,9 +20,10 @@ size = Vector3(0.6, 0.6, 1)
 material = ExtResource("3_ppco3")
 height = 0.05
 
-[node name="StarterBike" type="StarterBike" node_paths=PackedStringArray("Front Bike Wheel", "Bike Wheel")]
+[node name="StarterBike" type="StarterBike" node_paths=PackedStringArray("Front Bike Wheel", "Bike Wheel", "Fork")]
 "Front Bike Wheel" = NodePath("Steerer/FrontWheel")
 "Bike Wheel" = NodePath("RearWheel")
+Fork = NodePath("Steerer")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_5htyf")
@@ -49,9 +49,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.287315, -0.832488)
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_5mvw0")
 
-[node name="Steerer" type="Node3D" parent="."]
+[node name="Steerer" type="Fork" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.287, 0.731)
-script = ExtResource("6_5htyf")
 
 [node name="FrontWheel" type="FrontBikeWheel" parent="Steerer"]
 
