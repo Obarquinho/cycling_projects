@@ -1,6 +1,9 @@
 #include "register_types.h"
 
-#include "starter_bike.h"
+#include "bicycle/starter_bike.h"
+#include "bicycle/bike_wheel.h"
+#include "bicycle/front_bike_wheel.h"
+
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -14,6 +17,8 @@ void initialize_bike_module(ModuleInitializationLevel p_level) {
 	}
 
 	GDREGISTER_RUNTIME_CLASS(StarterBike);
+	GDREGISTER_RUNTIME_CLASS(BikeWheel);
+	GDREGISTER_RUNTIME_CLASS(FrontBikeWheel);
 }
 
 void uninitialize_bike_module(ModuleInitializationLevel p_level) {

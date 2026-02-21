@@ -40,3 +40,30 @@ func updateFloorAngle(unit):
 		$FloorAngle.text = "floor angle %0.3f" % unit
 	else:
 		$FloorAngle.text = ""
+
+
+func _on_starter_bike_bike_speed(spd: float) -> void:
+	updateVelocity(spd)
+
+func _on_starter_bike_bike_acceleration(accel: float) -> void:
+	updateAcceleration(accel);
+
+
+func _on_starter_bike_bike_rotation(bike_rotation: Vector3) -> void:
+	updateRotation(bike_rotation.x, bike_rotation.y, bike_rotation.z)
+
+
+func _on_starter_bike_effort(effort: float) -> void:
+	updateEffort(effort)
+
+
+func _on_starter_bike_energy(nrg: float) -> void:
+	updateNRG(nrg)
+
+
+func _on_starter_bike_floor_angle(floor_angle: float) -> void:
+	updateFloorAngle(floor_angle)
+
+
+func _on_starter_bike_gear(gear: int) -> void:
+	updateGear(gear)
