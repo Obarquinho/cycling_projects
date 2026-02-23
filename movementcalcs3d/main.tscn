@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://n3yvykry1xpy"]
+[gd_scene load_steps=12 format=3 uid="uid://n3yvykry1xpy"]
 
 [ext_resource type="Texture2D" uid="uid://by7q7me72vadq" path="res://textures/florida.png" id="2_0xm2m"]
+[ext_resource type="Texture2D" uid="uid://b22to16ue82y2" path="res://textures/bnplogo.png" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://q54p583ebwbv" path="res://starter_bike.tscn" id="3_h2yge"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
@@ -22,7 +23,11 @@ size = Vector3(1000, 5, 1)
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_0xm2m"]
 points = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, -1, -10, 4, 1, -10, 4, -1)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
+albedo_texture = ExtResource("2_h2yge")
+
 [sub_resource type="PrismMesh" id="PrismMesh_0xm2m"]
+material = SubResource("StandardMaterial3D_1bvp3")
 left_to_right = -0.3
 size = Vector3(9, 4, 1)
 

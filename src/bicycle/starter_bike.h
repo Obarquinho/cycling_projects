@@ -36,7 +36,7 @@ protected:
     int target_speed = MAX_SPEED;
     const double FRICTION = 0.05;
     const double BASE_ACCELERATION = 0.3;
-    const double BASE_BRAKE = 5.0;
+    const double BASE_BRAKE = 0.8;
     const double JUMP_VELOCITY = 4.5;
     const double STEERING_INTENSITY = 0.1;
     const double MAX_STEER = 1;
