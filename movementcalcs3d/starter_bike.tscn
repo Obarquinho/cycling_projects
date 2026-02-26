@@ -1,7 +1,6 @@
-[gd_scene load_steps=14 format=3 uid="uid://q54p583ebwbv"]
+[gd_scene load_steps=13 format=3 uid="uid://q54p583ebwbv"]
 
 [ext_resource type="Script" uid="uid://01afeipit4r7" path="res://camera_3d.gd" id="1_1wiy0"]
-[ext_resource type="Script" uid="uid://bslfyxxjfufr7" path="res://spatial.gd" id="1_ppco3"]
 [ext_resource type="PackedScene" uid="uid://lmvpv8kp8yog" path="res://hud.tscn" id="2_1wiy0"]
 [ext_resource type="ArrayMesh" uid="uid://d132hfubj0y5s" path="res://resources/bikeframe_v1.obj" id="3_5htyf"]
 [ext_resource type="Texture2D" uid="uid://b22to16ue82y2" path="res://textures/bnplogo.png" id="4_5mvw0"]
@@ -34,8 +33,7 @@ Fork = NodePath("Steerer")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_5htyf")
 
-[node name="Spatial" type="Node3D" parent="."]
-script = ExtResource("1_ppco3")
+[node name="Spatial" type="CameraController" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="Spatial"]
 transform = Transform3D(-1, -5.1514325e-14, 8.7422755e-08, 2.77237e-08, 0.9483845, 0.31712285, -8.29104e-08, 0.31712285, -0.9483845, 0, 1.22028, -2.00916)
