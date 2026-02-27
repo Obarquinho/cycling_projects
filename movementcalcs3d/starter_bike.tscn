@@ -1,62 +1,84 @@
-[gd_scene load_steps=10 format=3 uid="uid://q54p583ebwbv"]
+[gd_scene load_steps=13 format=3 uid="uid://q54p583ebwbv"]
 
-[ext_resource type="Texture2D" uid="uid://dygvcacklg2he" path="res://textures/omafiets.jpg" id="1_1nj2o"]
 [ext_resource type="Script" uid="uid://01afeipit4r7" path="res://camera_3d.gd" id="1_1wiy0"]
-[ext_resource type="Script" uid="uid://bslfyxxjfufr7" path="res://spatial.gd" id="1_ppco3"]
 [ext_resource type="PackedScene" uid="uid://lmvpv8kp8yog" path="res://hud.tscn" id="2_1wiy0"]
-[ext_resource type="Material" uid="uid://7qqlq0kheobb" path="res://stage/tile_material.tres" id="3_ppco3"]
+[ext_resource type="ArrayMesh" uid="uid://d132hfubj0y5s" path="res://resources/bikeframe_v1.obj" id="3_5htyf"]
+[ext_resource type="Texture2D" uid="uid://b22to16ue82y2" path="res://textures/bnplogo.png" id="4_5mvw0"]
+[ext_resource type="ArrayMesh" uid="uid://bqyiw6gu3wk0i" path="res://resources/wheel_v2.obj" id="5_5htyf"]
+[ext_resource type="ArrayMesh" uid="uid://0vpqrxwcsnrp" path="res://resources/fork_v2.obj" id="6_5htyf"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5htyf"]
 size = Vector3(0.6, 0.6, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5dyll"]
-albedo_texture = ExtResource("1_1nj2o")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3g3xd"]
+albedo_texture = ExtResource("4_5mvw0")
 
-[sub_resource type="BoxMesh" id="BoxMesh_l7tlv"]
-material = SubResource("StandardMaterial3D_5dyll")
-size = Vector3(0.6, 0.6, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5mvw0"]
+albedo_texture = ExtResource("4_5mvw0")
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_5mvw0"]
-material = ExtResource("3_ppco3")
-height = 0.05
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3bf5u"]
+albedo_texture = ExtResource("4_5mvw0")
 
-[node name="StarterBike" type="StarterBike" node_paths=PackedStringArray("Front Bike Wheel", "Bike Wheel", "Fork")]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xaac7"]
+albedo_texture = ExtResource("4_5mvw0")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_am0e2"]
+albedo_texture = ExtResource("4_5mvw0")
+
+[node name="StarterBike" type="StarterBike" node_paths=PackedStringArray("Front Bike Wheel", "Bike Wheel", "Fork", "Camera Controller")]
 "Front Bike Wheel" = NodePath("Steerer/FrontWheel")
 "Bike Wheel" = NodePath("RearWheel")
 Fork = NodePath("Steerer")
+"Camera Controller" = NodePath("Spatial")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_5htyf")
 
-[node name="Spatial" type="Node3D" parent="."]
-script = ExtResource("1_ppco3")
+[node name="Spatial" type="CameraController" parent="."]
+visible = false
 
 [node name="Camera3D" type="Camera3D" parent="Spatial"]
 transform = Transform3D(-1, -5.1514325e-14, 8.7422755e-08, 2.77237e-08, 0.9483845, 0.31712285, -8.29104e-08, 0.31712285, -0.9483845, 0, 1.22028, -2.00916)
+visible = false
 script = ExtResource("1_1wiy0")
 
 [node name="Frame" type="Node3D" parent="."]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Frame"]
-mesh = SubResource("BoxMesh_l7tlv")
+transform = Transform3D(-0.05, 0, -4.371139e-09, 0, 0.05, 0, 4.371139e-09, 0, -0.05, 0, 0, 0)
+mesh = ExtResource("3_5htyf")
+surface_material_override/0 = SubResource("StandardMaterial3D_3g3xd")
+surface_material_override/1 = SubResource("StandardMaterial3D_3g3xd")
+surface_material_override/3 = SubResource("StandardMaterial3D_3g3xd")
 
 [node name="HUD" parent="." instance=ExtResource("2_1wiy0")]
 
 [node name="RearWheel" type="BikeWheel" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.287315, -0.832488)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06044416, -0.521)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RearWheel"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("CylinderMesh_5mvw0")
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
+mesh = ExtResource("5_5htyf")
+surface_material_override/0 = SubResource("StandardMaterial3D_5mvw0")
+surface_material_override/1 = SubResource("StandardMaterial3D_5mvw0")
+surface_material_override/2 = SubResource("StandardMaterial3D_5mvw0")
 
 [node name="Steerer" type="Fork" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.287, 0.731)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5262249, 0.8192726)
 
 [node name="FrontWheel" type="FrontBikeWheel" parent="Steerer"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.47435945, 0.16436273)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Steerer/FrontWheel"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("CylinderMesh_5mvw0")
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
+mesh = ExtResource("5_5htyf")
+surface_material_override/0 = SubResource("StandardMaterial3D_3bf5u")
+surface_material_override/1 = SubResource("StandardMaterial3D_xaac7")
+surface_material_override/2 = SubResource("StandardMaterial3D_am0e2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Steerer"]
+transform = Transform3D(-0.05, 0, -4.371139e-09, 0, 0.05, 0, 4.371139e-09, 0, -0.05, 0, -0.2568395, 0.094056964)
+mesh = ExtResource("6_5htyf")
 
 [connection signal="bike_acceleration" from="." to="HUD" method="_on_starter_bike_bike_acceleration"]
 [connection signal="bike_rotation" from="." to="HUD" method="_on_starter_bike_bike_rotation"]

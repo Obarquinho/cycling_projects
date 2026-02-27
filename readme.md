@@ -10,3 +10,8 @@ movementcalcs3d/ -> My main Godot project <br>
 # Notes
 run `scons platform=windows` at base directory level to recompile<br>
 Notice the `windows` part. I've only compiled this for windows.<br>
+
+# Brief Demo
+This is how movementcalcs3d looks as of February 22, 2026. Prototype bike model made by me.<br>
+Shown is acceleration in highest speed<br>
+![Demo gif of bike](resources/demo.gif)<br>

@@ -14,6 +14,7 @@
 #include "bike_wheel.h"
 #include "front_bike_wheel.h"
 #include "fork.h"
+#include "camera_controller.h"
 
 namespace godot {
 
@@ -36,7 +37,7 @@ protected:
     int target_speed = MAX_SPEED;
     const double FRICTION = 0.05;
     const double BASE_ACCELERATION = 0.3;
-    const double BASE_BRAKE = 5.0;
+    const double BASE_BRAKE = 0.8;
     const double JUMP_VELOCITY = 4.5;
     const double STEERING_INTENSITY = 0.1;
     const double MAX_STEER = 1;
@@ -65,10 +66,11 @@ protected:
     const double MAX_PITCH = -70.0;
     double prev_rot = 0.0; // debug, does not functionally change anything
 
-    // pointers to chilidren
+    // pointers to chilidren -> maybe refactor to use smart pointers
     BikeWheel* p_rearWheel = nullptr;
     FrontBikeWheel* p_frontWheel = nullptr;
     Fork* p_fork = nullptr;
+    CameraController* p_cameraController = nullptr;
 
 protected:
     static void _bind_methods();
@@ -80,6 +82,7 @@ public:
     // for some reason, _physics_process takes a double, and not a float as they've defined it as _physics_process(float: delta) in
     // GDScript :) 
     virtual void _physics_process(double delta) override;
+    virtual void _ready() override;
 
     // non GD overrides
     void effort_calculations();
@@ -96,6 +99,9 @@ public:
 
     void set_fork(Fork* _fork);
     Fork* get_fork() const;
+
+    void set_camera_controller(CameraController* _cameraController);
+    CameraController* get_camera_controller() const;
 
     //virtual void input(const Ref<InputEvent> &p_event) override;
 };

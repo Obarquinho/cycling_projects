@@ -3,6 +3,7 @@
 #include "bicycle/starter_bike.h"
 #include "bicycle/bike_wheel.h"
 #include "bicycle/front_bike_wheel.h"
+#include "bicycle/camera_controller.h"
 
 
 #include <gdextension_interface.h>
@@ -20,6 +21,7 @@ void initialize_bike_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_RUNTIME_CLASS(BikeWheel);
 	GDREGISTER_RUNTIME_CLASS(FrontBikeWheel);
 	GDREGISTER_RUNTIME_CLASS(Fork);
+	GDREGISTER_RUNTIME_CLASS(CameraController);
 }
 
 void uninitialize_bike_module(ModuleInitializationLevel p_level) {
