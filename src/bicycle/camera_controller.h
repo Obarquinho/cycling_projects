@@ -17,6 +17,13 @@ class CameraController : public Node3D {
 
         const double CAMERA_X_ROT_MIN = Math::deg_to_rad(-89.9);
         const double CAMERA_X_ROT_MAX = Math::deg_to_rad(70.0);
+        const double WAIT_FRAMES = 120;
+
+        double last_drag = 0;
+        double need_return = false;
+        Quaternion parent_quaternion;
+        Vector3 parent_position;
+        bool need_go_back =true;
 
     public:
         CameraController();
@@ -27,6 +34,10 @@ class CameraController : public Node3D {
         virtual void _input(const Ref<InputEvent> &event) override;
 
         void rotate_camera(Vector2& move);
+
+        void update_parent_quaternion(Quaternion& quat);
+
+        void update_parent_position(Vector3& pos);
 };
 
 }

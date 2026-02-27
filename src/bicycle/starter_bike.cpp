@@ -25,9 +25,13 @@ void StarterBike::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_fork", "_fork"), &StarterBike::set_fork);
     ClassDB::bind_method(D_METHOD("get_fork"), &StarterBike::get_fork);
 
+    ClassDB::bind_method(D_METHOD("set_camera_controller", "_cameraController"), &StarterBike::set_camera_controller);
+    ClassDB::bind_method(D_METHOD("get_camera_controller"), &StarterBike::get_camera_controller);
+
     ClassDB::add_property("StarterBike", PropertyInfo(Variant::OBJECT, "Front Bike Wheel", PROPERTY_HINT_NODE_TYPE, "FrontBikeWheel"), "set_front_wheel", "get_front_wheel");
     ClassDB::add_property("StarterBike", PropertyInfo(Variant::OBJECT, "Bike Wheel", PROPERTY_HINT_NODE_TYPE, "BikeWheel"), "set_rear_wheel", "get_rear_wheel");
     ClassDB::add_property("StarterBike", PropertyInfo(Variant::OBJECT, "Fork", PROPERTY_HINT_NODE_TYPE, "Fork"), "set_fork", "get_fork");
+    ClassDB::add_property("StarterBike", PropertyInfo(Variant::OBJECT, "Camera Controller", PROPERTY_HINT_NODE_TYPE, "CameraController"), "set_camera_controller", "get_camera_controller");
 
 }
 
@@ -62,6 +66,18 @@ void StarterBike::set_fork(Fork* _fork){
 
 Fork* StarterBike::get_fork() const {
     return p_fork;
+}
+
+void StarterBike::set_camera_controller(CameraController* _cameraController){
+    p_cameraController = _cameraController;
+}
+
+CameraController* StarterBike::get_camera_controller() const {
+    return p_cameraController;
+}
+
+void StarterBike::_ready(){
+    p_cameraController->set_as_top_level(true);
 }
 
 void StarterBike::_physics_process(double delta){
@@ -236,6 +252,11 @@ void StarterBike::_physics_process(double delta){
 
     move_and_slide();
     update_energy(input);
+
+    if (p_cameraController) {
+        p_cameraController->update_parent_quaternion(get_quaternion());
+        p_cameraController->update_parent_position(get_global_position());
+    }
 
     emit_signal("bike_speed", speed);
     emit_signal("bike_acceleration", acceleration);

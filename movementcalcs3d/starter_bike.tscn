@@ -25,18 +25,21 @@ albedo_texture = ExtResource("4_5mvw0")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_am0e2"]
 albedo_texture = ExtResource("4_5mvw0")
 
-[node name="StarterBike" type="StarterBike" node_paths=PackedStringArray("Front Bike Wheel", "Bike Wheel", "Fork")]
+[node name="StarterBike" type="StarterBike" node_paths=PackedStringArray("Front Bike Wheel", "Bike Wheel", "Fork", "Camera Controller")]
 "Front Bike Wheel" = NodePath("Steerer/FrontWheel")
 "Bike Wheel" = NodePath("RearWheel")
 Fork = NodePath("Steerer")
+"Camera Controller" = NodePath("Spatial")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_5htyf")
 
 [node name="Spatial" type="CameraController" parent="."]
+visible = false
 
 [node name="Camera3D" type="Camera3D" parent="Spatial"]
 transform = Transform3D(-1, -5.1514325e-14, 8.7422755e-08, 2.77237e-08, 0.9483845, 0.31712285, -8.29104e-08, 0.31712285, -0.9483845, 0, 1.22028, -2.00916)
+visible = false
 script = ExtResource("1_1wiy0")
 
 [node name="Frame" type="Node3D" parent="."]
