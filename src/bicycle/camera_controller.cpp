@@ -35,7 +35,7 @@ void CameraController::_input(const Ref<InputEvent> &event){
 void CameraController::_process(double delta){
     last_drag++;
     //Quaternion objective = get_quaternion();
-    double speed = 0.05;
+    double speed = 0.025;
     // if (last_drag > WAIT_FRAMES && need_return && need_go_back){
     //     Quaternion q_cur = get_quaternion();//get_global_basis().get_rotation_quaternion();
     //     Quaternion q_desired = Quaternion(Vector3(1,0,0), 0);
@@ -60,9 +60,9 @@ void CameraController::_process(double delta){
     
     set_global_position(parent_position);
 
-    if(need_go_back){
+    if(need_go_back && last_drag >= WAIT_FRAMES){
         Quaternion q_c = get_quaternion();
-        Quaternion q_n = q_c.slerp(parent_quaternion, speed*.1);
+        Quaternion q_n = q_c.slerp(parent_quaternion, speed);
         //if (q_c.angle_to(q_n) >= 0.01){
             set_quaternion(q_n);
         //}
