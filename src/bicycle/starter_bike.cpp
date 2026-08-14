@@ -129,6 +129,8 @@ void StarterBike::_physics_process(double delta){
     if (input->is_action_pressed("PitchDown")){
         z_direction = -1;
     }
+
+    UtilityFunctions::print(is_on_floor());
     
     if (z_direction == 0 && is_on_floor()){
         z_direction = -0.6;
@@ -224,9 +226,6 @@ void StarterBike::_physics_process(double delta){
 	// velocity = Vector3(0,velocity.y,speed).rotated(Vector3.UP, trueRotation)
     // std::cout << "GREP" << speed << "\n";
     velocity = Vector3(0,velocity.y,speed).rotated(Vector3(0,1,0), rotation.y);
-
-    //$FrontWheel.global_rotation.y = global_rotation.y
-	//$FrontWheel.global_rotation.y += front_angle
 	
 	if (prev_rot != rotation.y){
 		prev_rot = rotation.y;
@@ -236,7 +235,8 @@ void StarterBike::_physics_process(double delta){
 	
 	//# gravity
 	if (!is_on_floor()){
-		//print("HELLO")
+		//print("HELLO");
+        //std::cout << "HELLO";
 		velocity += get_gravity() * delta;
     }
     // last velocity modification, so set velocity
@@ -244,18 +244,24 @@ void StarterBike::_physics_process(double delta){
 	
     // var rot = rotation_degrees
     if(p_frontWheel && p_rearWheel){
+        Vector3 frontWheelGlobPos = p_frontWheel->get_global_position();
+        Vector3 rearWheelGlobPos = p_rearWheel->get_global_position();
+        // our frame's position is the midpoint between these two positions
         p_frontWheel->rotate_wheel(speed, delta);
         p_rearWheel->rotate_wheel(speed, delta);
     } else {
         std::cout << "There are not enough wheels to rotate\n";
     }
 
+    // TODO up_direction = Vector3(-0.998974, 0.045286827, 0) ??????
     move_and_slide();
+    UtilityFunctions::print(is_on_floor());
     update_energy(input);
 
     if (p_cameraController) {
         p_cameraController->update_parent_quaternion(get_quaternion());
         p_cameraController->update_parent_position(get_global_position());
+        p_cameraController->update_parent_speed(speed);
     }
 
     emit_signal("bike_speed", speed);

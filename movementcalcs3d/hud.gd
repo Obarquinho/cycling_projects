@@ -40,7 +40,15 @@ func updateFloorAngle(unit):
 		$FloorAngle.text = "floor angle %0.3f" % unit
 	else:
 		$FloorAngle.text = ""
+	
+func updateCameraAngle(unit):
+	$CamAng.text = "Cam: %0.3f" % unit
+	
+func updateParentAngle(unit):
+	$ParAng.text = "Par: %0.3f" % unit
 
+func updateAngleLimit(unit):
+	$AngLim.text = "Lim: %0.4f" % unit
 
 func _on_starter_bike_bike_speed(spd: float) -> void:
 	updateVelocity(spd)
@@ -67,3 +75,15 @@ func _on_starter_bike_floor_angle(floor_angle: float) -> void:
 
 func _on_starter_bike_gear(gear: int) -> void:
 	updateGear(gear)
+
+
+func _on_spatial_camera_angle(cam_ang: float) -> void:
+	updateCameraAngle(cam_ang)
+
+
+func _on_spatial_parent_angle(par_ang: float) -> void:
+	updateParentAngle(par_ang)
+
+
+func _on_spatial_angle_limit(angle_limit: float) -> void:
+	updateAngleLimit(angle_limit)

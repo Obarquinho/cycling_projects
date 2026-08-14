@@ -1,14 +1,16 @@
-[gd_scene load_steps=13 format=3 uid="uid://q54p583ebwbv"]
+[gd_scene format=3 uid="uid://q54p583ebwbv"]
 
 [ext_resource type="Script" uid="uid://01afeipit4r7" path="res://camera_3d.gd" id="1_1wiy0"]
+[ext_resource type="PackedScene" uid="uid://cekele1movw8r" path="res://lowpolychar.tscn" id="1_l7tlv"]
 [ext_resource type="PackedScene" uid="uid://lmvpv8kp8yog" path="res://hud.tscn" id="2_1wiy0"]
 [ext_resource type="ArrayMesh" uid="uid://d132hfubj0y5s" path="res://resources/bikeframe_v1.obj" id="3_5htyf"]
 [ext_resource type="Texture2D" uid="uid://b22to16ue82y2" path="res://textures/bnplogo.png" id="4_5mvw0"]
 [ext_resource type="ArrayMesh" uid="uid://bqyiw6gu3wk0i" path="res://resources/wheel_v2.obj" id="5_5htyf"]
 [ext_resource type="ArrayMesh" uid="uid://0vpqrxwcsnrp" path="res://resources/fork_v2.obj" id="6_5htyf"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_5htyf"]
-size = Vector3(0.6, 0.6, 1)
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_l7tlv"]
+radius = 0.53759766
+height = 2.234375
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3g3xd"]
 albedo_texture = ExtResource("4_5mvw0")
@@ -25,58 +27,63 @@ albedo_texture = ExtResource("4_5mvw0")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_am0e2"]
 albedo_texture = ExtResource("4_5mvw0")
 
-[node name="StarterBike" type="StarterBike" node_paths=PackedStringArray("Front Bike Wheel", "Bike Wheel", "Fork", "Camera Controller")]
+[node name="StarterBike" type="StarterBike" unique_id=199613699 node_paths=PackedStringArray("Front Bike Wheel", "Bike Wheel", "Fork", "Camera Controller")]
 "Front Bike Wheel" = NodePath("Steerer/FrontWheel")
 "Bike Wheel" = NodePath("RearWheel")
 Fork = NodePath("Steerer")
 "Camera Controller" = NodePath("Spatial")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("BoxShape3D_5htyf")
+[node name="lowpolychar" parent="." unique_id=2040520498 instance=ExtResource("1_l7tlv")]
+transform = Transform3D(1, 0, 0, 0, 0.9897787, -0.14261165, 0, 0.14261165, 0.9897787, 0, 0.026602864, -0.2320779)
 
-[node name="Spatial" type="CameraController" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=80831658]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.26516634, 0.24886405)
+shape = SubResource("CapsuleShape3D_l7tlv")
+
+[node name="Spatial" type="CameraController" parent="." unique_id=1291735118]
+"Slerp Speed" = 0.02
 visible = false
 
-[node name="Camera3D" type="Camera3D" parent="Spatial"]
-transform = Transform3D(-1, -5.1514325e-14, 8.7422755e-08, 2.77237e-08, 0.9483845, 0.31712285, -8.29104e-08, 0.31712285, -0.9483845, 0, 1.22028, -2.00916)
+[node name="Camera3D" type="Camera3D" parent="Spatial" unique_id=56167747]
+transform = Transform3D(-1, -5.329068e-14, 8.742276e-08, 2.77237e-08, 0.9483845, 0.31712285, -8.29104e-08, 0.31712285, -0.9483845, 0, 1.6497678, -2.00916)
 visible = false
 script = ExtResource("1_1wiy0")
 
-[node name="Frame" type="Node3D" parent="."]
+[node name="Frame" type="Node3D" parent="." unique_id=1451034272]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Frame"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Frame" unique_id=89488579]
 transform = Transform3D(-0.05, 0, -4.371139e-09, 0, 0.05, 0, 4.371139e-09, 0, -0.05, 0, 0, 0)
 mesh = ExtResource("3_5htyf")
 surface_material_override/0 = SubResource("StandardMaterial3D_3g3xd")
 surface_material_override/1 = SubResource("StandardMaterial3D_3g3xd")
 surface_material_override/3 = SubResource("StandardMaterial3D_3g3xd")
 
-[node name="HUD" parent="." instance=ExtResource("2_1wiy0")]
+[node name="HUD" parent="." unique_id=7273017 instance=ExtResource("2_1wiy0")]
 
-[node name="RearWheel" type="BikeWheel" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06044416, -0.521)
+[node name="RearWheel" type="BikeWheel" parent="." unique_id=36379866]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, -0.521)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RearWheel"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RearWheel" unique_id=1665283876]
 transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
 mesh = ExtResource("5_5htyf")
 surface_material_override/0 = SubResource("StandardMaterial3D_5mvw0")
 surface_material_override/1 = SubResource("StandardMaterial3D_5mvw0")
 surface_material_override/2 = SubResource("StandardMaterial3D_5mvw0")
 
-[node name="Steerer" type="Fork" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5262249, 0.8192726)
+[node name="Steerer" type="Fork" parent="." unique_id=7758561]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.526, 0.819)
 
-[node name="FrontWheel" type="FrontBikeWheel" parent="Steerer"]
+[node name="FrontWheel" type="FrontBikeWheel" parent="Steerer" unique_id=1198916319]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.47435945, 0.16436273)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Steerer/FrontWheel"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Steerer/FrontWheel" unique_id=1325218283]
 transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
 mesh = ExtResource("5_5htyf")
 surface_material_override/0 = SubResource("StandardMaterial3D_3bf5u")
 surface_material_override/1 = SubResource("StandardMaterial3D_xaac7")
 surface_material_override/2 = SubResource("StandardMaterial3D_am0e2")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Steerer"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Steerer" unique_id=207158023]
 transform = Transform3D(-0.05, 0, -4.371139e-09, 0, 0.05, 0, 4.371139e-09, 0, -0.05, 0, -0.2568395, 0.094056964)
 mesh = ExtResource("6_5htyf")
 
@@ -88,3 +95,6 @@ mesh = ExtResource("6_5htyf")
 [connection signal="energy" from="." to="HUD" method="_on_starter_bike_energy"]
 [connection signal="floor_angle" from="." to="HUD" method="_on_starter_bike_floor_angle"]
 [connection signal="gear" from="." to="HUD" method="_on_starter_bike_gear"]
+[connection signal="angle_limit" from="Spatial" to="HUD" method="_on_spatial_angle_limit"]
+[connection signal="camera_angle" from="Spatial" to="HUD" method="_on_spatial_camera_angle"]
+[connection signal="parent_angle" from="Spatial" to="HUD" method="_on_spatial_parent_angle"]

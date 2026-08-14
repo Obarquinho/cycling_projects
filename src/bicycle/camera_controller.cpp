@@ -3,11 +3,52 @@
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 using namespace godot;
 
 void CameraController::_bind_methods() {
-    // do things
+    ADD_SIGNAL(MethodInfo("camera_angle", PropertyInfo(Variant::FLOAT, "cam_ang")));
+    ADD_SIGNAL(MethodInfo("parent_angle", PropertyInfo(Variant::FLOAT, "par_ang")));
+    ADD_SIGNAL(MethodInfo("angle_limit", PropertyInfo(Variant::FLOAT, "angle_limit")));
+
+    ClassDB::bind_method(D_METHOD("set_slow_angle", "_rads"), &CameraController::set_slow_angle);
+    ClassDB::bind_method(D_METHOD("get_slow_angle"), &CameraController::get_slow_angle);
+    
+    ClassDB::bind_method(D_METHOD("set_fast_angle", "_rads"), &CameraController::set_fast_angle);
+    ClassDB::bind_method(D_METHOD("get_fast_angle"), &CameraController::get_fast_angle);
+
+    ClassDB::bind_method(D_METHOD("set_slerp_speed", "_spd"), &CameraController::set_slerp_speed);
+    ClassDB::bind_method(D_METHOD("get_slerp_speed"), &CameraController::get_slerp_speed);
+
+
+    ClassDB::add_property("CameraController", PropertyInfo(Variant::FLOAT, "Slow Angle", PROPERTY_HINT_NODE_TYPE, "Camera slow speed angle"), "set_slow_angle", "get_slow_angle");
+    ClassDB::add_property("CameraController", PropertyInfo(Variant::FLOAT, "Fast Angle", PROPERTY_HINT_NODE_TYPE, "Camera fast speed angle"), "set_fast_angle", "get_fast_angle");
+    ClassDB::add_property("CameraController", PropertyInfo(Variant::FLOAT, "Slerp Speed", PROPERTY_HINT_NODE_TYPE, "Camera slow speed angle"), "set_slerp_speed", "get_slerp_speed");
+}
+
+void CameraController::set_slow_angle(double _rads){
+    slow_angle = _rads;
+}
+
+double CameraController::get_slow_angle(){
+    return slow_angle;
+}
+
+void CameraController::set_fast_angle(double _rads){
+    fast_angle = _rads;
+}
+
+double CameraController::get_fast_angle(){
+    return fast_angle;
+}
+
+void CameraController::set_slerp_speed(double _spd){
+    slerp_speed=_spd;
+}
+
+double CameraController::get_slerp_speed(){
+    return slerp_speed;
 }
 
 CameraController::CameraController(){}
@@ -20,6 +61,7 @@ void CameraController::_input(const Ref<InputEvent> &event){
     // UtilityFunctions::print("SEEN");
 	if (mm.is_valid() && input->is_action_pressed("LMB")) {
         UtilityFunctions::print("DOING");
+        
 		rotate_camera(mm->get_screen_relative() * 0.001);
         last_drag = 0;
         need_return = true;
@@ -30,12 +72,51 @@ void CameraController::_input(const Ref<InputEvent> &event){
         last_drag = 0;
         need_go_back = true;
     }
+
+    if (input->is_action_pressed("TurnLeft")){
+        held_left = true;
+        if(angle_signal != signals::lock_left && angle_signal != signals::hold_reset){
+            angle_signal =  signals::reset;
+        }
+    }
+    else
+    {
+        held_left = false;
+    }
+
+    if(angle_signal == signals::lock_left && input->is_action_just_released("TurnLeft")){
+        angle_signal = signals::lock_mouse;
+    }
+    
+    if (input->is_action_pressed("TurnRight")){
+        held_right = true;
+        if(angle_signal != signals::lock_right && angle_signal != signals::hold_reset){
+            angle_signal =  signals::reset;
+        }
+    }
+    else
+    {
+        held_right = false;
+    }
+
+    if(angle_signal == signals::lock_right && input->is_action_just_released("TurnRight")){
+        angle_signal = signals::lock_mouse;
+    }
+
+    // Keep at bottom until figure out better way to use this enum.
+    if(!need_go_back){
+        angle_signal = signals::lock_mouse;
+    }
 }
 
 void CameraController::_process(double delta){
-    last_drag++;
+    // do not overflow this
+    if(last_drag <= WAIT_FRAMES){
+        last_drag++;
+    }
     //Quaternion objective = get_quaternion();
-    double speed = 0.025;
+    // was .025
+    double speed = slerp_speed;
     // if (last_drag > WAIT_FRAMES && need_return && need_go_back){
     //     Quaternion q_cur = get_quaternion();//get_global_basis().get_rotation_quaternion();
     //     Quaternion q_desired = Quaternion(Vector3(1,0,0), 0);
@@ -57,16 +138,148 @@ void CameraController::_process(double delta){
 
     // }
 
+    /*
+    
+    IDEA:
+    Speed-based angle limit. The faster you are going the smaller the angle you can have between the camera and parent.
+    If you are at an angle greater than the limit, then we will slerp until we reach that angle
+    For slerp, at end of each process, we cache the rotation between the camera and parent, so that on next process call, we can
+    rotate our camera's quaternion back to that rotation, and then apply the slerp. Looks less jittery
+    
+    */
+
     
     set_global_position(parent_position);
 
-    if(need_go_back && last_drag >= WAIT_FRAMES){
+    bool signal_locked = angle_signal == signals::lock_left || angle_signal == signals::lock_right;
+    print_signal(angle_signal);
+
+    double angle_limit = get_angle_limit(parent_speed);
+
+    Quaternion q_d = get_quaternion();
+    emit_signal("camera_angle", q_d.angle_to(Quaternion(0,1,0,0)));
+    emit_signal("parent_angle", parent_quaternion.angle_to(Quaternion(0,1,0,0)) - q_d.angle_to(Quaternion(0,1,0,0)));
+
+    emit_signal("camera_angle", q_d.get_euler().y);
+    emit_signal("parent_angle", parent_quaternion.get_euler().y - q_d.get_euler().y);
+    emit_signal("angle_limit", angle_limit);
+
+    double controller_angle = q_d.get_euler().y;
+    double parent_angle = parent_quaternion.get_euler().y;
+
+    if(need_go_back && last_drag >= WAIT_FRAMES && !signal_locked){
+        //Quaternion q_c = slerpRotation == Quaternion(0,0,0,1) ? get_quaternion() : slerpRotation * parent_quaternion;
+        if(slerpRotation == Quaternion(0,0,0,1)) UtilityFunctions::print("empty quat");
         Quaternion q_c = get_quaternion();
-        Quaternion q_n = q_c.slerp(parent_quaternion, speed);
+
+        /*UtilityFunctions::print("---");
+        UtilityFunctions::print(q_c.angle_to(parent_quaternion));
+        UtilityFunctions::print(parent_quaternion.angle_to(q_c));
+        UtilityFunctions::print(q_c.angle_to(Quaternion(0,1,0,0)), " ", q_c);
+        UtilityFunctions::print(parent_quaternion.angle_to(Quaternion(0,1,0,0)), " ", parent_quaternion);*/
+
+
+        
+        //UtilityFunctions::print(angle_limit, q_c.angle_to(parent_quaternion), q_c.get_angle(), parent_quaternion.get_angle(), q_c.dot(parent_quaternion));
+        //UtilityFunctions::print(std::format("q_c angle to parent {}, cam quat angle {}. parnet quat angle {}", q_c.angle_to(parent_quaternion), q_c.get_angle(), parent_quaternion.get_angle()));
+
+        
+
+        // was 1.2 not angle_limit
+        if (angle_signal == signals::reset && q_c.angle_to(parent_quaternion) > angle_limit){
+            goldDiff = q_c * parent_quaternion.inverse();
+
+            int mult = 1;
+            
+            if(held_left){
+                mult = -1;
+                angle_signal = signals::lock_left;
+            }
+            else /*if(held_right)*/{
+                angle_signal = signals::lock_right;
+            }
+            goldDiff = Quaternion(Vector3(0,1,0), angle_limit * mult); // seeing if this would work?
+            Quaternion q_b = parent_quaternion * goldDiff;
+            set_quaternion(q_b);
+            need_stutter = false;
+        }
+
+        //if(held_left || held_right) speed = 0.020;
+        Quaternion q_target = parent_quaternion;
+        if (angle_signal == signals::hold_reset){
+            // If i'm going narrower, I want to slerp to parent
+            // If i'm going wider, I want to slerp to angle limit (it is outer.)
+            if (q_c.angle_to(parent_quaternion) <= angle_limit) { // hold_reset has fulfilled its purpose of going from big angle limit to small limit
+                angle_signal = signals::reset;
+            }
+            else {
+                q_c = slerpRotation * parent_quaternion;
+            }
+
+            if(prev_angle < angle_limit){
+                int mult = 1;
+                if(held_left){
+                    mult = -1;
+                }
+                q_target = parent_quaternion * Quaternion(Vector3(0,1,0), mult * angle_limit);
+            }
+            
+        }
+        Quaternion q_n = q_c.slerp(q_target, speed);
         //if (q_c.angle_to(q_n) >= 0.01){
+        slerpRotation = q_n * parent_quaternion.inverse();
+        if((!held_right && !held_left) || angle_signal == signals::hold_reset/* && prev_angle > angle_limit)*/){ // second clause on and was added later
+            //angle_signal = angle_signal == signals::hold_reset ? signals::reset : angle_signal;
             set_quaternion(q_n);
+        }
         //}
     }
+    else if (signal_locked){
+        //Quaternion q_n = parent_quaternion + goldDiff;
+        Quaternion q_c = get_quaternion();
+        double cur_angle = q_c.angle_to(parent_quaternion);
+        // if(cur_angle < angle_limit && angle_limit != prev_angle) // prev angle check is not robust enough because will 
+        // {
+        //     UtilityFunctions::print(cur_angle, " lt ", angle_limit);
+        //     angle_signal = signals::reset;
+        // }
+        //else if(angle_limit < prev_angle)
+        if (angle_limit != prev_angle)
+        {
+            UtilityFunctions::print("---");
+            angle_signal = signals::hold_reset; //was reset
+            Quaternion q_n = goldDiff * parent_quaternion;
+
+            int mult = 1;
+            if(held_left){
+                mult = -1;
+            }
+            Quaternion q_target = parent_quaternion * Quaternion(Vector3(0,1,0), mult * angle_limit);
+            //q_n = q_target; //idk if set to actual limit or to lerp to it.
+            q_n = q_n.slerp(q_target, speed);
+
+            slerpRotation = q_n * parent_quaternion.inverse();
+
+            set_quaternion(q_n);
+        }
+        else
+        {
+            UtilityFunctions::print("+++", "\n", cur_angle, " gt " , angle_limit);
+            Quaternion q_rotate = Quaternion(Vector3(0,1,0), angle_limit); // set to limit (positive is to the right)
+            
+            Quaternion q_n = goldDiff * parent_quaternion;
+            if( goldDiff.angle_to(parent_quaternion) > angle_limit && prev_angle != angle_limit) { //only wwould work for turning right.
+                UtilityFunctions::print("SETTTING ++++++");
+                //q_n = parent_quaternion * q_rotate;
+            }
+            set_quaternion(q_n);
+        }
+    }
+
+    q_d = Quaternion(Vector3(0,1,0), -1);
+    //set_quaternion(parent_quaternion * q_d);
+    //set_quaternion(q_d * parent_quaternion);
+    prev_angle = angle_limit;
 }
 
 void CameraController::rotate_camera(Vector2& move){
@@ -85,4 +298,23 @@ void CameraController::update_parent_quaternion(Quaternion& quat){
 
 void CameraController::update_parent_position(Vector3& pos){
     parent_position = pos;
+}
+
+void CameraController::update_parent_speed(double spd){
+    parent_speed = spd;
+}
+
+double CameraController::get_angle_limit(double spd){
+    double ratio = (fast_speed-spd)/(fast_speed-slow_speed);
+    double p = slow_angle - fast_angle;
+    return (p*ratio) + fast_angle;
+}
+
+void CameraController::print_signal(signals s){
+    if (signal_map.find(s) != signal_map.end()){ // idk why this project is  not using >=cpp20
+        UtilityFunctions::print(signal_map[s].c_str());
+    }
+    else {
+        UtilityFunctions::print("UNRECOGNIZED SIGNAL");
+    }
 }
