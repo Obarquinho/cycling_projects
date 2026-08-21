@@ -53,6 +53,7 @@ class CameraController : public Node3D {
         bool held_left = false;
         bool held_right = false;
         signals angle_signal = signals::reset;
+        signals prev_lr_held = signals::reset;
         double prev_angle = 0;
 
         double slow_angle = 1.2;

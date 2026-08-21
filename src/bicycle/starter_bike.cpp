@@ -109,11 +109,14 @@ void StarterBike::_physics_process(double delta){
 
     double direction = 0;
     double z_direction = 0;
-    if (input->is_action_pressed("TurnLeft")){
+    if (input->is_action_pressed("TurnLeft") && input->is_action_pressed("TurnRight")){
+        UtilityFunctions::print("BOTH HELD");
+    }
+    else if (input->is_action_pressed("TurnLeft")){
         front_angle += STEERING_INTENSITY;
         direction = 1;
     }
-    if (input->is_action_pressed("TurnRight")){
+    else if (input->is_action_pressed("TurnRight")){
         front_angle -= STEERING_INTENSITY;
         direction = -1;
     }
@@ -130,7 +133,7 @@ void StarterBike::_physics_process(double delta){
         z_direction = -1;
     }
 
-    UtilityFunctions::print(is_on_floor());
+    //UtilityFunctions::print(is_on_floor());
     
     if (z_direction == 0 && is_on_floor()){
         z_direction = -0.6;

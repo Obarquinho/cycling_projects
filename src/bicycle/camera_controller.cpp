@@ -58,6 +58,8 @@ CameraController::~CameraController(){}
 void CameraController::_input(const Ref<InputEvent> &event){
     Ref<InputEventMouseMotion> mm = event;
     Input* input = Input::get_singleton();
+    bool l_held_l = false;
+    bool l_held_r = false;
     // UtilityFunctions::print("SEEN");
 	if (mm.is_valid() && input->is_action_pressed("LMB")) {
         UtilityFunctions::print("DOING");
@@ -74,7 +76,9 @@ void CameraController::_input(const Ref<InputEvent> &event){
     }
 
     if (input->is_action_pressed("TurnLeft")){
-        held_left = true;
+        held_left = (prev_lr_held == signals::hold_left || prev_lr_held == signals::reset);
+        if(held_left) prev_lr_held = signals::hold_left;
+        l_held_l = true;
         if(angle_signal != signals::lock_left && angle_signal != signals::hold_reset){
             angle_signal =  signals::reset;
         }
@@ -82,6 +86,7 @@ void CameraController::_input(const Ref<InputEvent> &event){
     else
     {
         held_left = false;
+        l_held_l = false;
     }
 
     if(angle_signal == signals::lock_left && input->is_action_just_released("TurnLeft")){
@@ -89,7 +94,10 @@ void CameraController::_input(const Ref<InputEvent> &event){
     }
     
     if (input->is_action_pressed("TurnRight")){
-        held_right = true;
+        UtilityFunctions::print("RIGHTPRES");
+        held_right = (prev_lr_held == signals::hold_right || prev_lr_held == signals::reset);
+        if(held_right) prev_lr_held = signals::hold_right;
+        l_held_r = true;
         if(angle_signal != signals::lock_right && angle_signal != signals::hold_reset){
             angle_signal =  signals::reset;
         }
@@ -97,10 +105,15 @@ void CameraController::_input(const Ref<InputEvent> &event){
     else
     {
         held_right = false;
+        l_held_r = false;
     }
 
     if(angle_signal == signals::lock_right && input->is_action_just_released("TurnRight")){
         angle_signal = signals::lock_mouse;
+    }
+
+    if((!l_held_l && prev_lr_held == signals::hold_left) || (!l_held_r && prev_lr_held == signals::hold_right)){
+        prev_lr_held = signals::reset;
     }
 
     // Keep at bottom until figure out better way to use this enum.
@@ -113,6 +126,20 @@ void CameraController::_process(double delta){
     // do not overflow this
     if(last_drag <= WAIT_FRAMES){
         last_drag++;
+    }
+
+    Input* input = Input::get_singleton();
+    bool heldLeft = false;
+    bool heldRight = false;
+    if (input->is_action_pressed("TurnLeft") && input->is_action_pressed("TurnRight")) {
+        heldLeft =false;
+        heldRight = false;
+    }
+    else if (input->is_action_pressed("TurnLeft")){
+        heldLeft = true;
+    }
+    else if (input->is_action_pressed("TurnRight")) {
+        heldRight = true;
     }
     //Quaternion objective = get_quaternion();
     // was .025
@@ -161,7 +188,7 @@ void CameraController::_process(double delta){
     emit_signal("parent_angle", parent_quaternion.angle_to(Quaternion(0,1,0,0)) - q_d.angle_to(Quaternion(0,1,0,0)));
 
     emit_signal("camera_angle", q_d.get_euler().y);
-    emit_signal("parent_angle", parent_quaternion.get_euler().y - q_d.get_euler().y);
+    emit_signal("parent_angle", parent_quaternion.get_euler().y/* - q_d.get_euler().y*/);
     emit_signal("angle_limit", angle_limit);
 
     double controller_angle = q_d.get_euler().y;
@@ -190,12 +217,32 @@ void CameraController::_process(double delta){
             goldDiff = q_c * parent_quaternion.inverse();
 
             int mult = 1;
+
+            double l_cam_angle = q_c.get_euler().y;
+            double l_par_angle = parent_quaternion.get_euler().y;
+            double diff = l_cam_angle - l_par_angle;
+            double crossDist = 0;
+            if(diff > M_PI)
+            { 
+                diff -= M_PI;
+                crossDist = M_PI - l_cam_angle + M_PI + l_par_angle;
+            }
+            if(diff < -M_PI) diff += M_PI;
+
+            bool secondPart = crossDist != 0 ? diff < crossDist : true;
+            bool l_to_right = diff > 0 && secondPart;
+
+            UtilityFunctions::print("PARENT: ", l_par_angle, " CAM: ", l_cam_angle);
+            UtilityFunctions::print("DIFF: ", diff, " L_TO_RIGHT ", l_to_right, " HELD_RIGHT ", heldRight, " HELD LEFT ", heldLeft);
+            print_signal(prev_lr_held);
+
             
-            if(held_left){
+            
+            if((/*held_left ||*/ heldLeft) && !l_to_right){
                 mult = -1;
                 angle_signal = signals::lock_left;
             }
-            else /*if(held_right)*/{
+            else if((/*held_right ||*/ heldRight) && l_to_right) /*if(held_right)*/{
                 angle_signal = signals::lock_right;
             }
             goldDiff = Quaternion(Vector3(0,1,0), angle_limit * mult); // seeing if this would work?
@@ -218,7 +265,8 @@ void CameraController::_process(double delta){
 
             if(prev_angle < angle_limit){
                 int mult = 1;
-                if(held_left){
+                if(/*held_left*/heldLeft){
+                //if(held_left){
                     mult = -1;
                 }
                 q_target = parent_quaternion * Quaternion(Vector3(0,1,0), mult * angle_limit);
@@ -228,7 +276,7 @@ void CameraController::_process(double delta){
         Quaternion q_n = q_c.slerp(q_target, speed);
         //if (q_c.angle_to(q_n) >= 0.01){
         slerpRotation = q_n * parent_quaternion.inverse();
-        if((!held_right && !held_left) || angle_signal == signals::hold_reset/* && prev_angle > angle_limit)*/){ // second clause on and was added later
+        if(/*(!held_right && !held_left)*/(!heldLeft && !heldRight) || angle_signal == signals::hold_reset/* && prev_angle > angle_limit)*/){ // second clause on and was added later
             //angle_signal = angle_signal == signals::hold_reset ? signals::reset : angle_signal;
             set_quaternion(q_n);
         }
@@ -251,7 +299,8 @@ void CameraController::_process(double delta){
             Quaternion q_n = goldDiff * parent_quaternion;
 
             int mult = 1;
-            if(held_left){
+            if(heldLeft /*held_left*/){
+            //if(held_left){
                 mult = -1;
             }
             Quaternion q_target = parent_quaternion * Quaternion(Vector3(0,1,0), mult * angle_limit);
