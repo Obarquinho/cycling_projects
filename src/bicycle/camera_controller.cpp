@@ -60,10 +60,7 @@ void CameraController::_input(const Ref<InputEvent> &event){
     Input* input = Input::get_singleton();
     bool l_held_l = false;
     bool l_held_r = false;
-    // UtilityFunctions::print("SEEN");
-	if (mm.is_valid() && input->is_action_pressed("LMB")) {
-        UtilityFunctions::print("DOING");
-        
+	if (mm.is_valid() && input->is_action_pressed("LMB")) {       
 		rotate_camera(mm->get_screen_relative() * 0.001);
         last_drag = 0;
         need_return = true;
@@ -141,30 +138,8 @@ void CameraController::_process(double delta){
     else if (input->is_action_pressed("TurnRight")) {
         heldRight = true;
     }
-    //Quaternion objective = get_quaternion();
-    // was .025
+
     double speed = slerp_speed;
-    // if (last_drag > WAIT_FRAMES && need_return && need_go_back){
-    //     Quaternion q_cur = get_quaternion();//get_global_basis().get_rotation_quaternion();
-    //     Quaternion q_desired = Quaternion(Vector3(1,0,0), 0);
-
-        
-    //     //Quaternion q_new = q_cur.slerp(q_desired, speed);
-    //     Quaternion q_new = q_cur.slerp(parent_quaternion, speed);
-
-
-        
-
-    //     if (q_new.angle_to(q_desired) < 0.8){
-    //         //set_global_basis(Quaternion(Vector3(1,0,0),0));
-    //         UtilityFunctions::print("RETURNED");
-    //         need_return = false;
-    //     } else {
-    //         set_quaternion(q_new);
-    //     }
-
-    // }
-
     /*
     
     IDEA:
@@ -195,22 +170,8 @@ void CameraController::_process(double delta){
     double parent_angle = parent_quaternion.get_euler().y;
 
     if(need_go_back && last_drag >= WAIT_FRAMES && !signal_locked){
-        //Quaternion q_c = slerpRotation == Quaternion(0,0,0,1) ? get_quaternion() : slerpRotation * parent_quaternion;
         if(slerpRotation == Quaternion(0,0,0,1)) UtilityFunctions::print("empty quat");
         Quaternion q_c = get_quaternion();
-
-        /*UtilityFunctions::print("---");
-        UtilityFunctions::print(q_c.angle_to(parent_quaternion));
-        UtilityFunctions::print(parent_quaternion.angle_to(q_c));
-        UtilityFunctions::print(q_c.angle_to(Quaternion(0,1,0,0)), " ", q_c);
-        UtilityFunctions::print(parent_quaternion.angle_to(Quaternion(0,1,0,0)), " ", parent_quaternion);*/
-
-
-        
-        //UtilityFunctions::print(angle_limit, q_c.angle_to(parent_quaternion), q_c.get_angle(), parent_quaternion.get_angle(), q_c.dot(parent_quaternion));
-        //UtilityFunctions::print(std::format("q_c angle to parent {}, cam quat angle {}. parnet quat angle {}", q_c.angle_to(parent_quaternion), q_c.get_angle(), parent_quaternion.get_angle()));
-
-        
 
         // was 1.2 not angle_limit
         if (angle_signal == signals::reset && q_c.angle_to(parent_quaternion) > angle_limit){
@@ -238,20 +199,19 @@ void CameraController::_process(double delta){
 
             
             
-            if((/*held_left ||*/ heldLeft) && !l_to_right){
+            if((heldLeft) && !l_to_right) {
                 mult = -1;
                 angle_signal = signals::lock_left;
             }
-            else if((/*held_right ||*/ heldRight) && l_to_right) /*if(held_right)*/{
+            else if((heldRight) && l_to_right) {
                 angle_signal = signals::lock_right;
             }
-            goldDiff = Quaternion(Vector3(0,1,0), angle_limit * mult); // seeing if this would work?
+            goldDiff = Quaternion(Vector3(0,1,0), angle_limit * mult);
             Quaternion q_b = parent_quaternion * goldDiff;
             set_quaternion(q_b);
             need_stutter = false;
         }
 
-        //if(held_left || held_right) speed = 0.020;
         Quaternion q_target = parent_quaternion;
         if (angle_signal == signals::hold_reset){
             // If i'm going narrower, I want to slerp to parent
@@ -265,8 +225,7 @@ void CameraController::_process(double delta){
 
             if(prev_angle < angle_limit){
                 int mult = 1;
-                if(/*held_left*/heldLeft){
-                //if(held_left){
+                if(heldLeft){
                     mult = -1;
                 }
                 q_target = parent_quaternion * Quaternion(Vector3(0,1,0), mult * angle_limit);
@@ -274,24 +233,15 @@ void CameraController::_process(double delta){
             
         }
         Quaternion q_n = q_c.slerp(q_target, speed);
-        //if (q_c.angle_to(q_n) >= 0.01){
         slerpRotation = q_n * parent_quaternion.inverse();
-        if(/*(!held_right && !held_left)*/(!heldLeft && !heldRight) || angle_signal == signals::hold_reset/* && prev_angle > angle_limit)*/){ // second clause on and was added later
-            //angle_signal = angle_signal == signals::hold_reset ? signals::reset : angle_signal;
+        if((!heldLeft && !heldRight) || angle_signal == signals::hold_reset){
             set_quaternion(q_n);
         }
         //}
     }
     else if (signal_locked){
-        //Quaternion q_n = parent_quaternion + goldDiff;
         Quaternion q_c = get_quaternion();
         double cur_angle = q_c.angle_to(parent_quaternion);
-        // if(cur_angle < angle_limit && angle_limit != prev_angle) // prev angle check is not robust enough because will 
-        // {
-        //     UtilityFunctions::print(cur_angle, " lt ", angle_limit);
-        //     angle_signal = signals::reset;
-        // }
-        //else if(angle_limit < prev_angle)
         if (angle_limit != prev_angle)
         {
             UtilityFunctions::print("---");
@@ -299,8 +249,7 @@ void CameraController::_process(double delta){
             Quaternion q_n = goldDiff * parent_quaternion;
 
             int mult = 1;
-            if(heldLeft /*held_left*/){
-            //if(held_left){
+            if (heldLeft) {
                 mult = -1;
             }
             Quaternion q_target = parent_quaternion * Quaternion(Vector3(0,1,0), mult * angle_limit);
@@ -317,17 +266,10 @@ void CameraController::_process(double delta){
             Quaternion q_rotate = Quaternion(Vector3(0,1,0), angle_limit); // set to limit (positive is to the right)
             
             Quaternion q_n = goldDiff * parent_quaternion;
-            if( goldDiff.angle_to(parent_quaternion) > angle_limit && prev_angle != angle_limit) { //only wwould work for turning right.
-                UtilityFunctions::print("SETTTING ++++++");
-                //q_n = parent_quaternion * q_rotate;
-            }
             set_quaternion(q_n);
         }
     }
 
-    q_d = Quaternion(Vector3(0,1,0), -1);
-    //set_quaternion(parent_quaternion * q_d);
-    //set_quaternion(q_d * parent_quaternion);
     prev_angle = angle_limit;
 }
 
