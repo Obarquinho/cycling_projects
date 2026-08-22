@@ -1,11 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://lmvpv8kp8yog"]
+[gd_scene format=3 uid="uid://lmvpv8kp8yog"]
 
 [ext_resource type="Script" uid="uid://cvulcxxvjichs" path="res://hud.gd" id="1_37p78"]
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="CanvasLayer" unique_id=1248849076]
 script = ExtResource("1_37p78")
 
-[node name="Velocity" type="Label" parent="."]
+[node name="Velocity" type="Label" parent="." unique_id=460997449]
 offset_left = 815.0
 offset_top = 569.0
 offset_right = 855.0
@@ -15,7 +15,7 @@ text = "0
 "
 horizontal_alignment = 1
 
-[node name="Acceleration" type="Label" parent="."]
+[node name="Acceleration" type="Label" parent="." unique_id=2015305010]
 offset_left = 1006.0
 offset_top = 569.0
 offset_right = 1046.0
@@ -25,7 +25,7 @@ text = "0
 "
 horizontal_alignment = 1
 
-[node name="SpeedCap" type="Label" parent="."]
+[node name="SpeedCap" type="Label" parent="." unique_id=1628626014]
 offset_left = 959.0
 offset_top = 16.0
 offset_right = 1120.0
@@ -34,7 +34,7 @@ theme_override_font_sizes/font_size = 25
 text = "No SpeedCap"
 horizontal_alignment = 1
 
-[node name="EffortLevel" type="Label" parent="."]
+[node name="EffortLevel" type="Label" parent="." unique_id=1537853987]
 offset_left = 944.0
 offset_top = 72.0
 offset_right = 1137.0
@@ -43,7 +43,7 @@ theme_override_font_sizes/font_size = 25
 text = "Effort Level: 100"
 horizontal_alignment = 1
 
-[node name="Gear" type="Label" parent="."]
+[node name="Gear" type="Label" parent="." unique_id=1946869841]
 offset_left = 949.0
 offset_top = 124.0
 offset_right = 1142.0
@@ -52,7 +52,7 @@ theme_override_font_sizes/font_size = 25
 text = "Gear: 1"
 horizontal_alignment = 1
 
-[node name="NRG" type="Label" parent="."]
+[node name="NRG" type="Label" parent="." unique_id=948517241]
 offset_left = 694.0
 offset_top = 14.0
 offset_right = 887.0
@@ -61,7 +61,7 @@ theme_override_font_sizes/font_size = 25
 text = "NRG: 100"
 horizontal_alignment = 1
 
-[node name="Rotation" type="Label" parent="."]
+[node name="Rotation" type="Label" parent="." unique_id=1636384124]
 offset_left = 47.0
 offset_top = 31.0
 offset_right = 152.0
@@ -71,7 +71,7 @@ text = "x: 1 y: 0  z: 0
 "
 horizontal_alignment = 1
 
-[node name="DebugSpan" type="Label" parent="."]
+[node name="DebugSpan" type="Label" parent="." unique_id=965627881]
 offset_left = 21.0
 offset_top = 580.0
 offset_right = 164.0
@@ -80,11 +80,41 @@ theme_override_font_sizes/font_size = 15
 text = "Debug Mode: True"
 horizontal_alignment = 1
 
-[node name="FloorAngle" type="Label" parent="."]
+[node name="FloorAngle" type="Label" parent="." unique_id=996658661]
 offset_left = 31.0
 offset_top = 86.0
 offset_right = 174.0
 offset_bottom = 159.0
+theme_override_font_sizes/font_size = 15
+text = "floor angle: 69
+"
+horizontal_alignment = 1
+
+[node name="CamAng" type="Label" parent="." unique_id=2021280351]
+offset_left = 31.0
+offset_top = 115.0
+offset_right = 174.0
+offset_bottom = 188.0
+theme_override_font_sizes/font_size = 15
+text = "floor angle: 69
+"
+horizontal_alignment = 1
+
+[node name="ParAng" type="Label" parent="." unique_id=1232909712]
+offset_left = 32.0
+offset_top = 152.0
+offset_right = 175.0
+offset_bottom = 225.0
+theme_override_font_sizes/font_size = 15
+text = "floor angle: 69
+"
+horizontal_alignment = 1
+
+[node name="AngLim" type="Label" parent="." unique_id=1135895565]
+offset_left = 34.0
+offset_top = 180.0
+offset_right = 177.0
+offset_bottom = 227.0
 theme_override_font_sizes/font_size = 15
 text = "floor angle: 69
 "
